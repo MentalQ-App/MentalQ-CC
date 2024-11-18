@@ -1,66 +1,62 @@
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Users extends Model {
+  class Notes extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Users.belongsTo(models.Credentials, {
-        foreignKey: 'credentials_id',
-        as: 'credentials',
-      });
-
-      Users.hasMany(models.Notes, {
+      Notes.belongsTo(models.Users, {
         foreignKey: 'user_id',
-        as: 'notes',
+        as: 'user', 
       });
     }
   }
 
-  Users.init(
+  Notes.init(
     {
-      user_id: {
+      note_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        field: 'user_id',
+        field: 'note_id',
       },
-      credentials_id: {
+      user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: 'credentials',
-          key: 'credentials_id',
+          model: 'users',
+          key: 'user_id',
         },
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       },
-      email: {
+      title: {
         type: DataTypes.STRING,
-        unique: true,
-        allowNull: false,
-        validate: {
-          isEmail: true,
-        },
-      },
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      birthday: {
-        type: DataTypes.DATEONLY,
         allowNull: true,
+      },
+      content: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      emotion: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      isActive: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
       },
     },
     {
       sequelize,
-      modelName: 'Users',
-      tableName: 'users',
+      modelName: 'Notes',
+      tableName: 'notes',
     }
   );
 
-  return Users;
+  return Notes;
 };
