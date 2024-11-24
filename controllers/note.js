@@ -1,5 +1,7 @@
 const db = require('../models');
 const { Notes, Users, Analysis } = db;
+require('dotenv').config();
+import axios from 'axios';
 
 exports.createNote = async (req, res) => {
     const { title, content, emotion } = req.body;
@@ -252,7 +254,7 @@ exports.analyzeDailyNotes = async (req, res) => {
 
         // Make the AI service call
         const aiResponse = await axios.post(
-            'https://https://mentalq-model-api-93052596836.asia-southeast2.run.app/predict',
+            process.env.CLOUDRUNAPI + '/predict',
             { content },
             {
                 headers: { 'Content-Type': 'application/json' },
