@@ -252,7 +252,7 @@ exports.analyzeDailyNotes = async (req, res) => {
 
         // Make the AI service call
         const aiResponse = await axios.post(
-            'https://<cloud-run-url>/analyze',
+            'https://https://mentalq-model-api-93052596836.asia-southeast2.run.app/predict',
             { content },
             {
                 headers: { 'Content-Type': 'application/json' },
