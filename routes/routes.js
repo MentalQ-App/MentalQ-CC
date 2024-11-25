@@ -3,6 +3,7 @@ const express = require('express');
 const userController = require('../controllers/user');
 const noteController = require('../controllers/note');
 const authController = require('../controllers/auth');
+const analysisController = require('../controllers/analysis');
 const authenticateToken = require('../middleware/authenticateToken');
 
 const router = express.Router();
@@ -31,8 +32,7 @@ router.post('/notes', authenticateToken, noteController.createNote);
 router.put('/notes/:id', authenticateToken, noteController.updateNote);
 router.put('/notes/delete/:id', authenticateToken, noteController.deleteNote);
 
-
-
-
+// Analysis Routes
+router.get('/analysis', authenticateToken, analysisController.getAnalysis);
 
 module.exports = router;
