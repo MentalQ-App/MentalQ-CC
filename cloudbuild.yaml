@@ -7,9 +7,9 @@ steps:
 
   # Step 2: Run tests (optional, remove if not applicable)
   - name: 'node:18-alpine'
-    id: Run Tests
+    id: Run start
     entrypoint: npm
-    args: ['test']
+    args: ['start']
 
   # Step 3: Build the Docker image
   - name: 'gcr.io/cloud-builders/docker'
