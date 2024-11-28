@@ -17,7 +17,7 @@ steps:
     args: [
       'build',
       '-t',
-      'REGION-docker.pkg.dev/$PROJECT_ID/REPOSITORY_NAME/your-app-image',
+      'REGION-docker.pkg.dev/$PROJECT_ID/gcr.io/mentalq-backend',
       '.'
     ]
 
@@ -26,7 +26,7 @@ steps:
     id: Push Docker Image
     args: [
       'push',
-      'REGION-docker.pkg.dev/$PROJECT_ID/REPOSITORY_NAME/your-app-image'
+      'REGION-docker.pkg.dev/$PROJECT_ID/gcr.io/mentalq-backend'
     ]
 
   # Step 5: Deploy the image to Cloud Run
@@ -37,7 +37,7 @@ steps:
       'deploy',
       'your-app-service',
       '--image',
-      'REGION-docker.pkg.dev/$PROJECT_ID/REPOSITORY_NAME/your-app-image',
+      'REGION-docker.pkg.dev/$PROJECT_ID/gcr.io/mentalq-backend',
       '--region',
       'us-central1',
       '--platform',
@@ -46,4 +46,4 @@ steps:
     ]
 
 images:
-  - 'REGION-docker.pkg.dev/$PROJECT_ID/REPOSITORY_NAME/your-app-image'
+  - 'REGION-docker.pkg.dev/$PROJECT_ID/gcr.io/mentalq-backend'
