@@ -45,7 +45,9 @@ steps:
       '--allow-unauthenticated',
       '--port=3000',
       '--timeout',
-      '300s'
+      '300s',
+      '--memory',
+      '4Gi',
     ]
 
 images:
