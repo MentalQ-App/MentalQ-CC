@@ -1,0 +1,49 @@
+steps:
+  # Step 1: Pull the Node.js base image and install dependencies
+  - name: 'node:18-alpine'
+    id: Install Dependencies
+    entrypoint: npm
+    args: ['install']
+
+  # Step 2: Run tests (optional, remove if not applicable)
+  - name: 'node:18-alpine'
+    id: Run Tests
+    entrypoint: npm
+    args: ['test']
+
+  # Step 3: Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: Build Docker Image
+    args: [
+      'build',
+      '-t',
+      'REGION-docker.pkg.dev/$PROJECT_ID/REPOSITORY_NAME/your-app-image',
+      '.'
+    ]
+
+  # Step 4: Push the Docker image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    id: Push Docker Image
+    args: [
+      'push',
+      'REGION-docker.pkg.dev/$PROJECT_ID/REPOSITORY_NAME/your-app-image'
+    ]
+
+  # Step 5: Deploy the image to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: Deploy to Cloud Run
+    args: [
+      'run',
+      'deploy',
+      'your-app-service',
+      '--image',
+      'REGION-docker.pkg.dev/$PROJECT_ID/REPOSITORY_NAME/your-app-image',
+      '--region',
+      'us-central1',
+      '--platform',
+      'managed',
+      '--allow-unauthenticated'
+    ]
+
+images:
+  - 'REGION-docker.pkg.dev/$PROJECT_ID/REPOSITORY_NAME/your-app-image'
