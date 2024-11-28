@@ -1,3 +1,6 @@
+options:
+  logging: CLOUD_LOGGING_ONLY
+
 steps:
   # Step 1: Pull the Node.js base image and install dependencies
   - name: 'node:18-alpine'
