@@ -8,12 +8,6 @@ steps:
     entrypoint: npm
     args: ['install']
 
-  # Step 2: Run tests (optional, remove if not applicable)
-  - name: 'node:18-alpine'
-    id: Run start
-    entrypoint: npm
-    args: ['start']
-
   # Step 3: Build the Docker image
   - name: 'gcr.io/cloud-builders/docker'
     id: Build Docker Image
