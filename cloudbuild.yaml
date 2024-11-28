@@ -9,7 +9,7 @@ steps:
     args:
       - '-c'
       - |
-        gcloud secrets versions access latest --secret=mentalq-backend-env > /app/.env
+        gcloud secrets versions access latest --secret=mentalq-backend-env > /workspace/app/.env
 
   # Step 1: Pull the Node.js base image and install dependencies
   - name: 'node:18-alpine'
@@ -21,7 +21,7 @@ steps:
     id: Build Docker Image
     args: [
       'build',
-      '--build-arg', 'mentalq-backend-env_PATH=/app/.env',
+      '--build-arg', 'mentalq-backend-env_PATH=/workspace/app/.env',
       '-t', 'asia-southeast2-docker.pkg.dev/mentalq-cloud/mentalq-backend/backend-api',
       '.'
     ]
