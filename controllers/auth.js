@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const validator = require('validator');
 const rateLimit = require('express-rate-limit');
+const admin = require('firebase-admin');
 require('dotenv').config();
 
 const { Users, Credentials, UserSessions, PasswordResetTokens } = db;
@@ -218,6 +219,7 @@ exports.loginUser = async (req, res) => {
         await t.commit();
 
         const safeUser = {
+            user_id: user.user_id,
             email: user.email,
             name: user.name,
             birthday: user.birthday,
@@ -234,6 +236,93 @@ exports.loginUser = async (req, res) => {
 
     } catch (error) {
         if (t) await t.rollback();
+        res.status(400).json({ 
+            error: true, 
+            message: error.message 
+        });
+    }
+};
+
+// // Inisalisasi firebase dlu brok cihuy (non-vercel)
+// const serviceAccount = require('../firebase-admin-sdk.json');
+
+// admin.initializeApp({
+//     credential: admin.credential.cert(serviceAccount)
+// });
+
+const firebaseCreds = JSON.parse(process.env.FIREBASE_CREDENTIALS);
+
+admin.initializeApp({
+    credential: admin.credential.cert(firebaseCreds),
+    projectId: firebaseCreds.project_id
+  });
+
+
+exports.authFirebase = async (req, res) => {
+    const { firebaseToken } = req.body;
+
+    try{
+        const decodedToken = await admin.auth().verifyIdToken(firebaseToken, true);
+        const { email, name, picture } = decodedToken;
+
+        let user = await Users.findOne({
+            where: { email },
+            include: 'credentials'
+        });
+
+        if (!user) {
+            const t = await db.sequelize.transaction();
+
+            const newCredentials = await Credentials.create(
+                { 
+                    email: email, 
+                    firebase_uid: decodedToken.uid,
+                    is_email_verified: true,
+                    role: 'user'
+                },
+                { transaction: t }
+            );
+
+            user = await Users.create(
+                {
+                    credentials_id: newCredentials.credentials_id,
+                    email,
+                    name,
+                    profile_photo_url: picture
+                },
+                { transaction: t }
+            );
+
+            await t.commit();
+        }
+
+        const token = jwt.sign(
+            { user_id: user.user_id }, 
+            process.env.TOKEN_SECRET
+        );
+
+        await UserSessions.upsert(
+            {
+                user_id: user.user_id,
+                session_token: token
+            }
+        );
+
+        const safeUser = {
+            user_id: user.user_id,
+            email: user.email,
+            name: user.name,
+            profile_photo_url: user.profile_photo_url,
+            role: user.credentials.role
+        };
+
+        res.status(200).json({
+            error: false,
+            message: 'User logged in successfully',
+            user: safeUser,
+            token: token
+        });
+    } catch (error) {
         res.status(400).json({ 
             error: true, 
             message: error.message 
