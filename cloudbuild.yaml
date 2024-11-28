@@ -11,28 +11,18 @@ steps:
       - |
         gcloud secrets versions access latest --secret=mentalq-backend-env > /app/.env
 
-  # Step 2: Copy the .env file into the Docker image
-  - name: 'gcr.io/cloud-builders/docker'
-    id: Build Docker Image
-    args: [
-      'build',
-      '--build-arg', 'mentalq-backend-env_PATH=/app/.env',
-      '-t', 'asia-southeast2-docker.pkg.dev/mentalq-cloud/mentalq-backend/backend-api',
-      '.'
-    ]
   # Step 1: Pull the Node.js base image and install dependencies
   - name: 'node:18-alpine'
     id: Install Dependencies
     entrypoint: npm
     args: ['install']
 
-  # Step 3: Build the Docker image
   - name: 'gcr.io/cloud-builders/docker'
     id: Build Docker Image
     args: [
       'build',
-      '-t',
-      'asia-southeast2-docker.pkg.dev/mentalq-cloud/mentalq-backend/backend-api',
+      '--build-arg', 'mentalq-backend-env_PATH=/app/.env',
+      '-t', 'asia-southeast2-docker.pkg.dev/mentalq-cloud/mentalq-backend/backend-api',
       '.'
     ]
 
