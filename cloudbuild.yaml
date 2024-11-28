@@ -9,13 +9,8 @@ steps:
     args:
       - '-c'
       - |
+        mkdir -p /workspace/app
         gcloud secrets versions access latest --secret=mentalq-backend-env > /workspace/app/.env
-
-  # Step 1: Pull the Node.js base image and install dependencies
-  - name: 'node:18-alpine'
-    id: Install Dependencies
-    entrypoint: npm
-    args: ['install']
 
   - name: 'gcr.io/cloud-builders/docker'
     id: Build Docker Image
@@ -26,7 +21,7 @@ steps:
       '.'
     ]
 
-  # Step 4: Push the Docker image to Artifact Registry
+
   - name: 'gcr.io/cloud-builders/docker'
     id: Push Docker Image
     args: [
