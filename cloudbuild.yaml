@@ -42,7 +42,8 @@ steps:
       'asia-southeast2',
       '--platform',
       'managed',
-      '--allow-unauthenticated'
+      '--allow-unauthenticated',
+      '--port=3000'
     ]
 
 images:
