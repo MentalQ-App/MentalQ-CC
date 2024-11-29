@@ -16,8 +16,7 @@ COPY . .
 # Ensure the .env file is copied if it exists
 # This assumes the .env file is in the build context's root directory
 COPY .env .env
-COPY cloud_cred.json cloud_cred.json
-COPY firebase_cred cloud_cred.json
+
 
 # Expose the port the app runs on
 EXPOSE 8080
