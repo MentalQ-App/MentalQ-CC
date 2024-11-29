@@ -13,7 +13,7 @@ steps:
         gcloud secrets versions access latest --secret=mentalq-backend-env > /workspace/.env
   
   - name: 'gcr.io/cloud-builders/gcloud'
-    id: Fetch .env File
+    id: Fetch cloudcred File
     entrypoint: bash
     args:
       - '-c'
@@ -22,7 +22,7 @@ steps:
         gcloud secrets versions access latest --secret=mentalq-backend-cloudcred > /workspace/cloud_cred.json
 
   - name: 'gcr.io/cloud-builders/gcloud'
-    id: Fetch .env File
+    id: Fetch firebasecred File
     entrypoint: bash
     args:
       - '-c'
