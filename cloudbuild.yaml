@@ -9,8 +9,9 @@ steps:
     args:
       - '-c'
       - |
-        mkdir -p /workspace/app
-        gcloud secrets versions access latest --secret=mentalq-backend-env > /workspace/app/.env
+        mkdir -p /workspace
+        gcloud secrets versions access latest --secret=mentalq-backend-env > /workspace/.env
+
 
   - name: 'gcr.io/cloud-builders/docker'
     id: Build Docker Image
@@ -29,7 +30,7 @@ steps:
       'asia-southeast2-docker.pkg.dev/mentalq-cloud/mentalq-backend/backend-api'
     ]
 
-  # Step 5: Deploy the image to Cloud Run
+
   - name: 'gcr.io/cloud-builders/gcloud'
     id: Deploy to Cloud Run
     args: [

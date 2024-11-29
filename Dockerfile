@@ -7,17 +7,18 @@ WORKDIR /app
 # Copy package.json and package-lock.json to the container
 COPY package*.json ./
 
-
-
 # Install project dependencies
 RUN npm install
 
 # Copy the entire project to the working directory
 COPY . .
 
-COPY app/.env .env
+# Ensure the .env file is copied if it exists
+# This assumes the .env file is in the build context's root directory
+COPY .env .env
 
 # Expose the port the app runs on
 EXPOSE 8080
+
 # Command to start the application
 CMD ["npm", "start"]
