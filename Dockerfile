@@ -4,9 +4,6 @@ FROM node:18-alpine
 # Set the working directory inside the container
 WORKDIR /app
 
-# Define the build argument for .env file path
-ARG MENTALQ_BACKEND_ENV_PATH
-
 # Copy package.json and package-lock.json to the container
 COPY package*.json ./
 
@@ -16,11 +13,14 @@ RUN npm install
 # Copy the entire project to the working directory
 COPY . .
 
-# Copy the .env file into the container from the provided build argument path
-COPY ${MENTALQ_BACKEND_ENV_PATH} .env
+# Ensure the .env file is copied if it exists
+# This assumes the .env file is in the build context's root directory
+COPY .env .env
+COPY cloud_cred.json cloud_cred.json
+COPY firebase_cred cloud_cred.json
 
 # Expose the port the app runs on
-EXPOSE 3000 
+EXPOSE 8080
 
 # Command to start the application
 CMD ["npm", "start"]

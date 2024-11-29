@@ -2,6 +2,7 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
+
   - name: 'gcr.io/cloud-builders/gcloud'
     id: Fetch .env File
     entrypoint: bash
@@ -10,9 +11,9 @@ steps:
       - |
         mkdir -p /workspace
         gcloud secrets versions access latest --secret=mentalq-backend-env > /workspace/.env
-
+  
   - name: 'gcr.io/cloud-builders/gcloud'
-    id: Fetch Cloud Credentials
+    id: Fetch .env File
     entrypoint: bash
     args:
       - '-c'
@@ -21,7 +22,7 @@ steps:
         gcloud secrets versions access latest --secret=mentalq-backend-cloudcred > /workspace/cloud_cred.json
 
   - name: 'gcr.io/cloud-builders/gcloud'
-    id: Fetch Firebase Credentials
+    id: Fetch .env File
     entrypoint: bash
     args:
       - '-c'
@@ -29,44 +30,44 @@ steps:
         mkdir -p /workspace
         gcloud secrets versions access latest --secret=mentalq-backend-firebasecred > /workspace/firebase_cred.json
 
+
   - name: 'gcr.io/cloud-builders/docker'
     id: Build Docker Image
-    args:
-      [
-        'build',
-        '--build-arg', 'MENTALQ_BACKEND_ENV_PATH=/workspace/.env',  # Ensure this corresponds with your Dockerfile ARG
-        '-t', 'asia-southeast2-docker.pkg.dev/mentalq-cloud/mentalq-backend/backend-api',
-        '.'
-      ]
+    args: [
+      'build',
+      '--build-arg', 'mentalq-backend-env_PATH=/workspace/app/.env',
+      '-t', 'asia-southeast2-docker.pkg.dev/mentalq-cloud/mentalq-backend/backend-api',
+      '.'
+    ]
+
 
   - name: 'gcr.io/cloud-builders/docker'
     id: Push Docker Image
-    args:
-      [
-        'push',
-        'asia-southeast2-docker.pkg.dev/mentalq-cloud/mentalq-backend/backend-api'
-      ]
+    args: [
+      'push',
+      'asia-southeast2-docker.pkg.dev/mentalq-cloud/mentalq-backend/backend-api'
+    ]
+
 
   - name: 'gcr.io/cloud-builders/gcloud'
     id: Deploy to Cloud Run
-    args:
-      [
-        'run',
-        'deploy',
-        'mentalq-backend',
-        '--image',
-        'asia-southeast2-docker.pkg.dev/mentalq-cloud/mentalq-backend/backend-api',
-        '--region',
-        'asia-southeast2',
-        '--platform',
-        'managed',
-        '--allow-unauthenticated',
-        '--port=3000',  # Use port 3000 to match your app's config
-        '--timeout',
-        '600s',
-        '--memory',
-        '4Gi',
-      ]
+    args: [
+      'run',
+      'deploy',
+      'mentalq-backend',
+      '--image',
+      'asia-southeast2-docker.pkg.dev/mentalq-cloud/mentalq-backend/backend-api',
+      '--region',
+      'asia-southeast2',
+      '--platform',
+      'managed',
+      '--allow-unauthenticated',
+      '--port=8080',
+      '--timeout',
+      '600s',
+      '--memory',
+      '4Gi',
+    ]
 
 images:
   - 'asia-southeast2-docker.pkg.dev/mentalq-cloud/mentalq-backend/backend-api'
