@@ -14,8 +14,8 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.use('/api', userRoutes);
 
-const port = process.env.PORT || 3000;
-const host = process.env.HOST || '127.0.0.1';
+const port = process.env.PORT || 8080;
+const host = process.env.HOST || '0.0.0.0';
 
 process.on('unhandledRejection', (err) => {
     console.error('Unhandled Rejection:', err);

@@ -18,6 +18,6 @@ COPY . .
 COPY app/.env .env
 
 # Expose the port the app runs on
-EXPOSE 3000
+EXPOSE 8080
 # Command to start the application
 CMD ["npm", "start"]

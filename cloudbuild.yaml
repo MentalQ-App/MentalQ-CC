@@ -43,7 +43,7 @@ steps:
       '--platform',
       'managed',
       '--allow-unauthenticated',
-      '--port=3000',
+      '--port=8080',
       '--timeout',
       '600s',
       '--memory',
