@@ -13,12 +13,12 @@ RUN npm install
 # Copy the entire project to the working directory
 COPY . .
 
-# Ensure the .env file is copied if it exists
-# This assumes the .env file is in the build context's root directory
-COPY .env .env
+# Handle .env file using the build argument passed via Cloud Build
+ARG mentalq-backend-env_PATH
+COPY ${mentalq-backend-env_PATH} .env
 
 # Expose the port the app runs on
-EXPOSE 8080
+EXPOSE 3000
 
 # Command to start the application
 CMD ["npm", "start"]

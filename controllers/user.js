@@ -6,7 +6,10 @@ const multer = require('multer');
 const { Storage } = require('@google-cloud/storage');
 require('dotenv').config();
 
-const gcloudCreds = JSON.parse(process.env.GCLOUD_CREDENTIALS);
+const fs = require('fs');
+const fileContent = fs.readFileSync('cloud_cred.json', 'utf-8');
+
+const gcloudCreds = JSON.parse(fileContent);
 
 const storage = new Storage({
     credentials: gcloudCreds,

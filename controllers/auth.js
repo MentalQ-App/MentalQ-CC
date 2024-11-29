@@ -7,6 +7,7 @@ const validator = require('validator');
 const rateLimit = require('express-rate-limit');
 const admin = require('firebase-admin');
 require('dotenv').config();
+const fs = require('fs');
 
 const { Users, Credentials, UserSessions, PasswordResetTokens } = db;
 
@@ -249,8 +250,9 @@ exports.loginUser = async (req, res) => {
 // admin.initializeApp({
 //     credential: admin.credential.cert(serviceAccount)
 // });
+const firebase_content = fs.readFileSync('firebase_cred.json','utf-8')
 
-const firebaseCreds = JSON.parse(process.env.FIREBASE_CREDENTIALS);
+const firebaseCreds = JSON.parse(firebase_content);
 
 admin.initializeApp({
     credential: admin.credential.cert(firebaseCreds),

@@ -8,7 +8,7 @@ module.exports = {
     database: process.env.DB_NAME || 'mentalqdb',
     host: process.env.DB_HOST || '127.0.0.1',
     dialect: process.env.DB_DIALECT || 'mysql',
-    logging: true,
+    logging: false,
   },
   test: {
     username: process.env.DB_USER || 'root',
