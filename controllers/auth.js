@@ -244,12 +244,6 @@ exports.loginUser = async (req, res) => {
     }
 };
 
-// // Inisalisasi firebase dlu brok cihuy (non-vercel)
-// const serviceAccount = require('../firebase-admin-sdk.json');
-
-// admin.initializeApp({
-//     credential: admin.credential.cert(serviceAccount)
-// });
 const firebase_content = fs.readFileSync('firebase_cred.json','utf-8')
 
 const firebaseCreds = JSON.parse(firebase_content);
@@ -314,6 +308,7 @@ exports.authFirebase = async (req, res) => {
             user_id: user.user_id,
             email: user.email,
             name: user.name,
+            birthday: user.birthday,
             profile_photo_url: user.profile_photo_url,
             role: user.credentials.role
         };
