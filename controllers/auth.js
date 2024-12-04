@@ -251,7 +251,7 @@ const firebaseCreds = JSON.parse(firebase_content);
 admin.initializeApp({
     credential: admin.credential.cert(firebaseCreds),
     projectId: firebaseCreds.project_id
-  });
+});
 
 
 exports.authFirebase = async (req, res) => {
@@ -303,6 +303,11 @@ exports.authFirebase = async (req, res) => {
                 session_token: token
             }
         );
+
+        user = await Users.findOne({
+            where: { email },
+            include: 'credentials'
+        });
 
         const safeUser = {
             user_id: user.user_id,
