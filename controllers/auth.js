@@ -72,7 +72,7 @@ exports.registerUser = async (req, res) => {
         }
 
         const [day, month, year] = birthday.split('/');
-        const birthdayDate = new Date(`${year}-${month}-${day}`);
+        const birthdayDate = new Date(${year}-${month}-${day});
 
         if (isNaN(birthdayDate.getTime())) {
             return res.status(400).json({ 
@@ -80,7 +80,6 @@ exports.registerUser = async (req, res) => {
                 message: 'Invalid birthday format' 
             });
         }
-
         t = await db.sequelize.transaction();
 
         const salt = await bcrypt.genSalt(10);
@@ -88,6 +87,15 @@ exports.registerUser = async (req, res) => {
 
         const emailVerificationToken = crypto.randomBytes(32).toString('hex');
         const emailVerificationExpires = Date.now() + 3600000;
+
+        const existingUser = await Users.findOne({ where: { email }, transaction: t });
+        if (existingUser) {
+            await t.rollback();
+            return res.status(400).json({ 
+                error: true, 
+                message: 'Email is already registered' 
+            });
+        }
 
         const newCredentials = await Credentials.create(
             { 
