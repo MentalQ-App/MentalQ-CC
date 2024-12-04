@@ -252,7 +252,7 @@ const analyzeNotes = async (user_id) => {
 
         const aiResponse = await axios.post(
             process.env.CLOUDRUNAPI + '/predict',
-            { data: [content] },
+            { statements: [content] },
             {
                 headers: { 'Content-Type': 'application/json' },
             }
