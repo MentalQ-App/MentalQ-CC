@@ -4,12 +4,14 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const multer = require('multer');
 const { Storage } = require('@google-cloud/storage');
+const exp = require('constants');
 require('dotenv').config();
 
 const fs = require('fs');
 const fileContent = fs.readFileSync('cloud_cred.json', 'utf-8');
 
 const gcloudCreds = JSON.parse(fileContent);
+
 
 const storage = new Storage({
     credentials: gcloudCreds,
@@ -328,3 +330,11 @@ exports.deleteUser = async (req, res) => {
         });
     }
 };
+
+exports.TermsOfService = async (req, res) => {
+    res.render('terms-of-service')
+}
+
+exports.PrivacyPolicy = async (req, res) => {
+    res.render('privacy-policy')
+}
