@@ -3,39 +3,11 @@ options:
 
 steps:
 
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: Fetch .env File
-    entrypoint: bash
-    args:
-      - '-c'
-      - |
-        mkdir -p /workspace
-        gcloud secrets versions access latest --secret=mentalq-backend-env > /workspace/.env
-  
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: Fetch cloudcred File
-    entrypoint: bash
-    args:
-      - '-c'
-      - |
-        mkdir -p /workspace
-        gcloud secrets versions access latest --secret=mentalq-backend-cloudcred > /workspace/cloud_cred.json
-
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: Fetch firebasecred File
-    entrypoint: bash
-    args:
-      - '-c'
-      - |
-        mkdir -p /workspace
-        gcloud secrets versions access latest --secret=mentalq-backend-firebasecred > /workspace/firebase_cred.json
-
-
   - name: 'gcr.io/cloud-builders/docker'
     id: Build Docker Image
     args: [
       'build',
-      '-t', 'asia-southeast2-docker.pkg.dev/mentalq-cloud/mentalq-backend/backend-api',
+      '-t', 'asia-southeast2-docker.pkg.dev/mentalq-cloud/mentalq-backend/model-api',
       '.'
     ]
 
@@ -44,7 +16,7 @@ steps:
     id: Push Docker Image
     args: [
       'push',
-      'asia-southeast2-docker.pkg.dev/mentalq-cloud/mentalq-backend/backend-api'
+      'asia-southeast2-docker.pkg.dev/mentalq-cloud/mentalq-backend/model-api'
     ]
 
 
@@ -55,13 +27,13 @@ steps:
       'deploy',
       'mentalq-backend',
       '--image',
-      'asia-southeast2-docker.pkg.dev/mentalq-cloud/mentalq-backend/backend-api',
+      'asia-southeast2-docker.pkg.dev/mentalq-cloud/mentalq-backend/model-api',
       '--region',
       'asia-southeast2',
       '--platform',
       'managed',
       '--allow-unauthenticated',
-      '--port=8080',
+      '--port=3000',
       '--timeout',
       '600s',
       '--memory',
@@ -69,4 +41,4 @@ steps:
     ]
 
 images:
-  - 'asia-southeast2-docker.pkg.dev/mentalq-cloud/mentalq-backend/backend-api'
+  - 'asia-southeast2-docker.pkg.dev/mentalq-cloud/mentalq-backend/model-api'

@@ -1,6 +1,0 @@
-node_modules
-.env
-important-credentials
-.env.vercel
-cloud_cred.json
-firebase_cred.json

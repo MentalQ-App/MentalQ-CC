@@ -1,25 +1,17 @@
-# Base image
-FROM node:18-alpine
+# Gunakan image Python
+FROM python:3.9-slim
 
-# Set the working directory inside the container
+# Set direktori kerja
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the container
-COPY package*.json ./
-
-# Install project dependencies
-RUN npm install
-
-# Copy the entire project to the working directory
+# Salin semua file ke dalam container
 COPY . .
 
-# Ensure the .env file is copied if it exists
-# This assumes the .env file is in the build context's root directory
-COPY .env .env
+# Instal dependensi
+RUN pip install --no-cache-dir -r requirements.txt
 
+# Ekspos port untuk aplikasi Flask
+EXPOSE 3000
 
-# Expose the port the app runs on
-EXPOSE 8080
-
-# Command to start the application
-CMD ["npm", "start"]
+# Perintah untuk menjalankan aplikasi
+CMD ["python", "apiflask.py"]
