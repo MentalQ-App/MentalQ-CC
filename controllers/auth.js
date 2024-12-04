@@ -72,7 +72,7 @@ exports.registerUser = async (req, res) => {
         }
 
         const [day, month, year] = birthday.split('/');
-        const birthdayDate = new Date(${year}-${month}-${day});
+        const birthdayDate = new Date(`${year}-${month}-${day}`);
 
         if (isNaN(birthdayDate.getTime())) {
             return res.status(400).json({ 
