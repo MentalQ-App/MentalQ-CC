@@ -1,40 +1,39 @@
-const db = require('../models');
+const db = require("../models");
 const { Users, Credentials } = db;
-const nodemailer = require('nodemailer');
-const crypto = require('crypto');
-const multer = require('multer');
-const { Storage } = require('@google-cloud/storage');
-const exp = require('constants');
-require('dotenv').config();
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
+const multer = require("multer");
+const { Storage } = require("@google-cloud/storage");
+const exp = require("constants");
+require("dotenv").config();
 
-const fs = require('fs');
-const pyschologist = require('../models/pyschologist');
-const fileContent = fs.readFileSync('cloud_cred.json', 'utf-8');
+const fs = require("fs");
+const pyschologist = require("../models/pyschologist");
+const fileContent = fs.readFileSync("cloud_cred.json", "utf-8");
 
 const gcloudCreds = JSON.parse(fileContent);
 
-
 const storage = new Storage({
-    credentials: gcloudCreds,
-    projectId: gcloudCreds.project_id
+   credentials: gcloudCreds,
+   projectId: gcloudCreds.project_id,
 });
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
-    },
+   service: "gmail",
+   auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
+   },
 });
 
 async function sendVerificationEmailUpdate(email, token) {
-    const verificationLink = `${process.env.FRONTEND_URL}/verify-email/${token}`;
+   const verificationLink = `${process.env.FRONTEND_URL}/verify-email/${token}`;
 
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: 'Verify Your New Email',
-        html: `
+   const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Verify Your New Email",
+      html: `
             <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
                 <div style="text-align: center; background-color: #f4f4f4; padding: 20px;">
                     <h2 style="color: #555;">Email Verification</h2>
@@ -62,318 +61,331 @@ async function sendVerificationEmailUpdate(email, token) {
                 </div>
             </div>
         `,
-    };
+   };
 
-    await transporter.sendMail(mailOptions);
+   await transporter.sendMail(mailOptions);
 }
 
 const bucketName = process.env.BUCKET_NAME;
 
 const multerStorage = multer.memoryStorage();
 const upload = multer({
-    storage: multerStorage,
-    limits: { fileSize: 5 * 1024 * 1024 },
-    fileFilter: (req, file, cb) => {
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-        if (allowedTypes.includes(file.mimetype)) {
-            cb(null, true);
-        } else {
-            cb(new Error('Invalid file type. Only JPEG, PNG, and GIF are allowed.'));
-        }
-    }
+   storage: multerStorage,
+   limits: { fileSize: 5 * 1024 * 1024 },
+   fileFilter: (req, file, cb) => {
+      const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+      if (allowedTypes.includes(file.mimetype)) {
+         cb(null, true);
+      } else {
+         cb(
+            new Error("Invalid file type. Only JPEG, PNG, and GIF are allowed.")
+         );
+      }
+   },
 });
 
 exports.updateUser = async (req, res) => {
-    const user_id = req.user_id;
-    const { email, name, birthday } = req.body;
-    const updateData = {};
-    let t;
+   const user_id = req.user_id;
+   const { email, name, birthday } = req.body;
+   const updateData = {};
+   let t;
 
-    try {
-        t = await db.sequelize.transaction();
+   try {
+      t = await db.sequelize.transaction();
 
-        const user = await Users.findOne({
-            where: { 
-                user_id,
-            },
-            include: "credentials",
-            transaction: t
-        });
+      const user = await Users.findOne({
+         where: {
+            user_id,
+         },
+         include: "credentials",
+         transaction: t,
+      });
 
-        if (!user) {
-            await t.rollback();
-            return res.status(404).json({
-                error: true,
-                message: 'User not found'
-            });
-        }
-
-        if (email && email !== user.email) {
-            const existingEmail = await Users.findOne({
-                where: { email },
-                transaction: t
-            });
-
-            if (existingEmail) {
-                await t.rollback();
-                return res.status(400).json({
-                    error: true,
-                    message: 'Email already exists'
-                });
-            }
-
-            const emailVerificationToken = crypto.randomBytes(32).toString('hex');
-            const emailVerificationExpires = Date.now() + 3600000;
-
-            user.credentials.email = email
-            user.credentials.email_verification_token = emailVerificationToken
-            user.credentials.email_verification_expires = emailVerificationExpires
-            user.credentials.is_email_verified = false
-
-            updateData.email = email;
-
-            await user.credentials.save({ transaction: t });
-
-            await sendVerificationEmailUpdate(email, emailVerificationToken);
-
-        }
-
-        if (req.file) {
-            const fileExt = req.file.originalname.split('.').pop();
-            const fileName = `${user_id}-${Date.now()}.${fileExt}`;
-            const filePath = `profile-pictures/${fileName}`;
-        
-            const bucket = storage.bucket(bucketName);
-            const file = bucket.file(filePath);
-        
-            if (Buffer.isBuffer(req.file.buffer)) {
-                await file.save(req.file.buffer, {
-                    metadata: {
-                        contentType: req.file.mimetype
-                    }
-                });
-            } else {
-                console.error('File buffer is not valid');
-                return;
-            }
-        
-            await file.makePublic();
-        
-            const publicUrl = `https://storage.googleapis.com/${bucketName}/${filePath}`;
-            
-            if (user.profile_photo_url) {
-                const oldFilePath = user.profile_photo_url.split('/').pop();
-                const oldFile = bucket.file(`profile-pictures/${oldFilePath}`);
-                await oldFile.delete().catch(err => console.error('Error deleting old profile photo:', err));
-            }
-        
-            updateData.profile_photo_url = publicUrl;
-        }
-        
-
-        if (name && name !== user.name) {
-            updateData.name = name;
-        }
-
-        if (birthday && birthday !== user.birthday) {
-            updateData.birthday = birthday;
-        }
-
-        if (Object.keys(updateData).length === 0) {
-            await t.rollback();
-            return res.status(200).json({
-                error: false,
-                message: 'No changes to update',
-                user: {
-                    user_id: user.user_id,
-                    email: user.email,
-                    name: user.name,
-                    birthday: user.birthday,
-                    profile_photo_url: user.profile_photo_url,
-                    role: user.credentials.role
-                }
-            });
-        }
-
-        const updatedUser = await user.update(updateData, { transaction: t });
-
-        await t.commit();
-
-        res.status(200).json({
-            error: false,
-            message: 'User updated successfully',
-            user: {
-                user_id: updatedUser.user_id,
-                email: updatedUser.email,
-                name: updatedUser.name,
-                birthday: updatedUser.birthday,
-                profile_photo_url: updatedUser.profile_photo_url,
-                role: user.credentials.role
-            }
-        });
-    } catch (error) {
-        if (t) await t.rollback();
-        res.status(400).json({
+      if (!user) {
+         await t.rollback();
+         return res.status(404).json({
             error: true,
-            message: error.message
-        });
-    }
+            message: "User not found",
+         });
+      }
+
+      if (email && email !== user.email) {
+         const existingEmail = await Users.findOne({
+            where: { email },
+            transaction: t,
+         });
+
+         if (existingEmail) {
+            await t.rollback();
+            return res.status(400).json({
+               error: true,
+               message: "Email already exists",
+            });
+         }
+
+         const emailVerificationToken = crypto.randomBytes(32).toString("hex");
+         const emailVerificationExpires = Date.now() + 3600000;
+
+         user.credentials.email = email;
+         user.credentials.email_verification_token = emailVerificationToken;
+         user.credentials.email_verification_expires = emailVerificationExpires;
+         user.credentials.is_email_verified = false;
+
+         updateData.email = email;
+
+         await user.credentials.save({ transaction: t });
+
+         await sendVerificationEmailUpdate(email, emailVerificationToken);
+      }
+
+      if (req.file) {
+         const fileExt = req.file.originalname.split(".").pop();
+         const fileName = `${user_id}-${Date.now()}.${fileExt}`;
+         const filePath = `profile-pictures/${fileName}`;
+
+         const bucket = storage.bucket(bucketName);
+         const file = bucket.file(filePath);
+
+         if (Buffer.isBuffer(req.file.buffer)) {
+            await file.save(req.file.buffer, {
+               metadata: {
+                  contentType: req.file.mimetype,
+               },
+            });
+         } else {
+            console.error("File buffer is not valid");
+            return;
+         }
+
+         await file.makePublic();
+
+         const publicUrl = `https://storage.googleapis.com/${bucketName}/${filePath}`;
+
+         if (user.profile_photo_url) {
+            const oldFilePath = user.profile_photo_url.split("/").pop();
+            const oldFile = bucket.file(`profile-pictures/${oldFilePath}`);
+            await oldFile
+               .delete()
+               .catch((err) =>
+                  console.error("Error deleting old profile photo:", err)
+               );
+         }
+
+         updateData.profile_photo_url = publicUrl;
+      }
+
+      if (name && name !== user.name) {
+         updateData.name = name;
+      }
+
+      if (birthday && birthday !== user.birthday) {
+         updateData.birthday = birthday;
+      }
+
+      if (Object.keys(updateData).length === 0) {
+         await t.rollback();
+         return res.status(200).json({
+            error: false,
+            message: "No changes to update",
+            user: {
+               user_id: user.user_id,
+               email: user.email,
+               name: user.name,
+               birthday: user.birthday,
+               profile_photo_url: user.profile_photo_url,
+               role: user.credentials.role,
+            },
+         });
+      }
+
+      const updatedUser = await user.update(updateData, { transaction: t });
+
+      await t.commit();
+
+      res.status(200).json({
+         error: false,
+         message: "User updated successfully",
+         user: {
+            user_id: updatedUser.user_id,
+            email: updatedUser.email,
+            name: updatedUser.name,
+            birthday: updatedUser.birthday,
+            profile_photo_url: updatedUser.profile_photo_url,
+            role: user.credentials.role,
+         },
+      });
+   } catch (error) {
+      if (t) await t.rollback();
+      res.status(400).json({
+         error: true,
+         message: error.message,
+      });
+   }
 };
 
-exports.uploadProfileImage = upload.single('profileImage');
+exports.uploadProfileImage = upload.single("profileImage");
 
 exports.getAllUsers = async (req, res) => {
-    let t;
+   let t;
 
-    try {
-        t = await db.sequelize.transaction();
+   try {
+      t = await db.sequelize.transaction();
 
-        const users = await Users.findAll({
-            attributes: ['user_id', 'email', 'name', 'birthday'],
-            where: { isActive: true },
-            transaction: t
-        });
+      const users = await Users.findAll({
+         attributes: ["user_id", "email", "name", "birthday"],
+         where: { isActive: true },
+         transaction: t,
+      });
 
-        await t.commit();
+      await t.commit();
 
-        res.status(200).json({
-            error: false,
-            message: 'Users retrieved successfully',
-            users: users
-        });
-    } catch (error) {
-        if (t) await t.rollback();
-        res.status(500).json({
-            error: true,
-            message: error.message
-        });
-    }
+      res.status(200).json({
+         error: false,
+         message: "Users retrieved successfully",
+         users: users,
+      });
+   } catch (error) {
+      if (t) await t.rollback();
+      res.status(500).json({
+         error: true,
+         message: error.message,
+      });
+   }
 };
 
 exports.getUserById = async (req, res) => {
-    const user_id = req.user_id;
-    let t;
+   const user_id = req.user_id;
+   let t;
 
-    try {
-        t = await db.sequelize.transaction();
+   try {
+      t = await db.sequelize.transaction();
 
-        const user = await Users.findOne({
-            where: { 
-                user_id,
-                isActive: true 
-            },
-            attributes: ['user_id', 'email', 'name', 'birthday'],
-            transaction: t
-        });
+      const user = await Users.findOne({
+         where: {
+            user_id,
+            isActive: true,
+         },
+         attributes: ["user_id", "email", "name", "birthday"],
+         transaction: t,
+      });
 
-        if (!user) {
-            await t.rollback();
-            return res.status(404).json({
-                error: true,
-                message: 'User not found'
-            });
-        }
-
-        await t.commit();
-
-        res.status(200).json({
-            error: false,
-            message: 'User retrieved successfully',
-            user
-        });
-    } catch (error) {
-        if (t) await t.rollback();
-        res.status(500).json({
+      if (!user) {
+         await t.rollback();
+         return res.status(404).json({
             error: true,
-            message: error.message
-        });
-    }
+            message: "User not found",
+         });
+      }
+
+      await t.commit();
+
+      res.status(200).json({
+         error: false,
+         message: "User retrieved successfully",
+         user,
+      });
+   } catch (error) {
+      if (t) await t.rollback();
+      res.status(500).json({
+         error: true,
+         message: error.message,
+      });
+   }
 };
 
 exports.deleteUser = async (req, res) => {
-    const user_id = req.user_id;
-    let t;
+   const user_id = req.user_id;
+   let t;
 
-    try {
-        t = await db.sequelize.transaction();
+   try {
+      t = await db.sequelize.transaction();
 
-        const user = await Users.findOne({
-            where: { 
-                user_id,
-                isActive: true 
-            },
-            transaction: t
-        });
+      const user = await Users.findOne({
+         where: {
+            user_id,
+            isActive: true,
+         },
+         transaction: t,
+      });
 
-        if (!user) {
-            await t.rollback();
-            return res.status(404).json({
-                error: true,
-                message: 'User not found'
-            });
-        }
-
-        await user.update({ 
-            isActive: false 
-        }, { transaction: t });
-
-        await t.commit();
-
-        res.status(200).json({
-            error: false,
-            message: 'User deleted successfully'
-        });
-    } catch (error) {
-        if (t) await t.rollback();
-        res.status(500).json({
+      if (!user) {
+         await t.rollback();
+         return res.status(404).json({
             error: true,
-            message: error.message
-        });
-    }
+            message: "User not found",
+         });
+      }
+
+      await user.update(
+         {
+            isActive: false,
+         },
+         { transaction: t }
+      );
+
+      await t.commit();
+
+      res.status(200).json({
+         error: false,
+         message: "User deleted successfully",
+      });
+   } catch (error) {
+      if (t) await t.rollback();
+      res.status(500).json({
+         error: true,
+         message: error.message,
+      });
+   }
 };
 
 exports.TermsOfService = async (req, res) => {
-    res.render('terms-of-service')
-}
+   res.render("terms-of-service");
+};
 
 exports.PrivacyPolicy = async (req, res) => {
-    res.render('privacy-policy')
-}
+   res.render("privacy-policy");
+};
 
 //Pyschologist Controller
 
-exports.getAllPyschologists = async (req, res) => {
-    let t
+exports.getAllPsychologists = async (req, res) => {
+   let t;
 
-    try {
-        t = await db.sequelize.transaction();
+   try {
+      t = await db.sequelize.transaction();
 
-        const psikolog = await pyschologist.findAll({
-            attributes: ['pyschologist_id', 'prefix_title', 'suffix_title', 'certificate', 'price', 'isVerified'],
-            where: { isActive: true },
-            include: [
-                {
-                    model: Users,
-                    as: 'users',
-                    attributes: [ 'name', 'profile_photo_url'],
-                    where: { isActive: true }
-                }
-            ],
-            transaction: t
-        });
+      const psikolog = await pyschologist.findAll({
+         attributes: [
+            "pyschologist_id",
+            "prefix_title",
+            "suffix_title",
+            "certificate",
+            "price",
+            "isVerified",
+         ],
+         where: { isActive: true },
+         include: [
+            {
+               model: Users,
+               as: "users",
+               attributes: ["name", "profile_photo_url"],
+               where: { isActive: true },
+            },
+         ],
+         transaction: t,
+      });
 
-        await t.commit();
+      await t.commit();
 
-        res.status(200).json({
-            error: false,
-            message: 'Users retrieved successfully',
-            users: psikolog
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            error: true,
-            message: error.message
-        });
-    }
+      res.status(200).json({
+         error: false,
+         message: "Users retrieved successfully",
+         users: psikolog,
+      });
+   } catch (error) {
+      res.status(500).json({
+         error: true,
+         message: error.message,
+      });
+   }
 };
