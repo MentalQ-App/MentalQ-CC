@@ -361,14 +361,14 @@ exports.getAllPsychologists = async (req, res) => {
             "certificate",
             "price",
             "isVerified",
+            "isOnline",
          ],
-         where: { isActive: true },
+         where: { isVerified: true },
          include: [
             {
                model: Users,
                as: "users",
                attributes: ["name", "profile_photo_url"],
-               where: { isActive: true },
             },
          ],
          transaction: t,
