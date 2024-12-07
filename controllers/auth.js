@@ -133,11 +133,11 @@ exports.registerUser = async (req, res) => {
 
 
 exports.registerPsikologi = async (req, res) => {
-    const { email, password, name, birthday, prefix_title, suffix_title, isVerified, certificate, price } = req.body;
+    const { email, password, name, birthday, prefix_title, suffix_title, certificate, price } = req.body;
     let t;
 
     try {
-        if (!email || !password || !name || !birthday || !prefix_title || !suffix_title || !isVerified || !certificate || !price) {
+        if (!email || !password || !name || !birthday || !prefix_title || !suffix_title || !certificate || !price) {
             return res.status(400).json({ 
                 error: true, 
                 message: 'All fields are required' 
@@ -169,7 +169,7 @@ exports.registerPsikologi = async (req, res) => {
             { transaction: t }
         );
 
-        await Users.create(
+        const user = await Users.create(
             {
                 credentials_id: newCredentials.credentials_id,
                 email,

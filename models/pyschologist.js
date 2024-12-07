@@ -44,6 +44,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: false
     },
+    isOnline: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false
+    },
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -59,6 +63,6 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Pyschologist',
     tableName: 'pyschologist',
   });
-  
+
   return Pyschologist;
 };
