@@ -32,7 +32,7 @@ router.post("/google-login", authController.authFirebase);
 
 // Auth Psikologi Routes
 router.post("/register-psikologi", authController.registerPsikologi);
-router.get("/psychologist", authController.getAllPsikologi);
+router.get("/psychologist", userController.getAllPsychologists);
 
 // Password Reset Routes
 router.post("/request-reset", authController.requestPasswordReset);
