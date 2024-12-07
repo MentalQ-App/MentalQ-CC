@@ -200,7 +200,6 @@ exports.registerPsikologi = async (req, res) => {
                 suffix_title,
                 certificate,
                 price,
-                isVerified
             },
             { transaction: t }
         );
