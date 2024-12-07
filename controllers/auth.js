@@ -170,13 +170,14 @@ exports.registerPsikologi = async (req, res) => {
                 message: 'Email is already registered' 
             });
         }
-        
+
         const newCredentials = await Credentials.create(
             { 
                 email, 
                 password: hashedPassword,
                 email_verification_token: emailVerificationToken,
-                email_verification_expires: emailVerificationExpires
+                email_verification_expires: emailVerificationExpires,
+                role: 'psychologist'
             },
             { transaction: t }
         );
