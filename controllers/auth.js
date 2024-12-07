@@ -159,6 +159,18 @@ exports.registerPsikologi = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
+        const emailVerificationToken = crypto.randomBytes(32).toString('hex');
+        const emailVerificationExpires = Date.now() + 3600000;
+
+        const existingUser = await Users.findOne({ where: { email }, transaction: t });
+        if (existingUser) {
+            await t.rollback();
+            return res.status(400).json({ 
+                error: true, 
+                message: 'Email is already registered' 
+            });
+        }
+        
         const newCredentials = await Credentials.create(
             { 
                 email, 
@@ -173,7 +185,7 @@ exports.registerPsikologi = async (req, res) => {
             {
                 credentials_id: newCredentials.credentials_id,
                 email,
-                name,
+                name,   
                 birthday: birthdayDate,
             },
             { transaction: t }
