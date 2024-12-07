@@ -216,19 +216,19 @@ exports.registerPsikologi = async (req, res) => {
          },
          { transaction: t }
       );
-      await sendVerificationEmail(email, emailVerificationToken);
-
+      
       await Psychologist.create(
-         {
-            user_id: user.user_id,
+          {
+              user_id: user.user_id,
             prefix_title,
             suffix_title,
             certificate,
             price,
-         },
-         { transaction: t }
-      );
-
+        },
+        { transaction: t }
+    );
+    
+    await sendVerificationEmail(email, emailVerificationToken);
       await t.commit();
 
       res.status(201).json({
