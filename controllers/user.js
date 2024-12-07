@@ -8,7 +8,7 @@ const exp = require("constants");
 require("dotenv").config();
 
 const fs = require("fs");
-const pyschologist = require("../models/pyschologist");
+const psychologist = require("../models/psychologist");
 const fileContent = fs.readFileSync("cloud_cred.json", "utf-8");
 
 const gcloudCreds = JSON.parse(fileContent);
@@ -346,7 +346,7 @@ exports.PrivacyPolicy = async (req, res) => {
    res.render("privacy-policy");
 };
 
-//Pyschologist Controller
+//Psychologist Controller
 
 exports.getAllPsychologists = async (req, res) => {
    let t;
@@ -354,9 +354,9 @@ exports.getAllPsychologists = async (req, res) => {
    try {
       t = await db.sequelize.transaction();
 
-      const psikolog = await pyschologist.findAll({
+      const psikolog = await psychologist.findAll({
          attributes: [
-            "pyschologist_id",
+            "psychologist_id",
             "prefix_title",
             "suffix_title",
             "certificate",
