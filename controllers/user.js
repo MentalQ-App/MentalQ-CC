@@ -362,7 +362,7 @@ exports.getAllPsychologists = async (req, res) => {
             "price",
             "isVerified",
          ],
-         where: { isActive: true },
+         where: { isVerified: true },
          include: [
             {
                model: Users,
