@@ -1,5 +1,5 @@
 const db = require("../models");
-const { Users, Credentials } = db;
+const { Users, Credentials, Psychologist } = db;
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 const multer = require("multer");
@@ -8,7 +8,6 @@ const exp = require("constants");
 require("dotenv").config();
 
 const fs = require("fs");
-const psychologist = require("../models/psychologist");
 const fileContent = fs.readFileSync("cloud_cred.json", "utf-8");
 
 const gcloudCreds = JSON.parse(fileContent);
@@ -354,7 +353,7 @@ exports.getAllPsychologists = async (req, res) => {
    try {
       t = await db.sequelize.transaction();
 
-      const psikolog = await psychologist.findAll({
+      const psikolog = await Psychologist.findAll({
          attributes: [
             "psychologist_id",
             "prefix_title",
