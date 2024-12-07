@@ -8,6 +8,7 @@ const exp = require('constants');
 require('dotenv').config();
 
 const fs = require('fs');
+const pyschologist = require('../models/pyschologist');
 const fileContent = fs.readFileSync('cloud_cred.json', 'utf-8');
 
 const gcloudCreds = JSON.parse(fileContent);
@@ -338,3 +339,41 @@ exports.TermsOfService = async (req, res) => {
 exports.PrivacyPolicy = async (req, res) => {
     res.render('privacy-policy')
 }
+
+//Pyschologist Controller
+
+exports.getAllPyschologists = async (req, res) => {
+    let t
+
+    try {
+        t = await db.sequelize.transaction();
+
+        const psikolog = await pyschologist.findAll({
+            attributes: ['pyschologist_id', 'prefix_title', 'suffix_title', 'certificate', 'price', 'isVerified'],
+            where: { isActive: true },
+            include: [
+                {
+                    model: Users,
+                    as: 'users',
+                    attributes: [ 'name', 'profile_photo_url'],
+                    where: { isActive: true }
+                }
+            ],
+            transaction: t
+        });
+
+        await t.commit();
+
+        res.status(200).json({
+            error: false,
+            message: 'Users retrieved successfully',
+            users: psikolog
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            error: true,
+            message: error.message
+        });
+    }
+};

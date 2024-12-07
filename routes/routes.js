@@ -24,6 +24,9 @@ router.get('/verify-email/:token', authController.verifyEmail);
 router.post('/login', authController.loginUser);
 router.post('/google-login', authController.authFirebase);
 
+// Auth Psikologi Routes
+router.post('/register-psikologi', authController.registerPsikologi);
+
 // Password Reset Routes
 router.post('/request-reset', authController.requestPasswordReset);
 router.post('/verify-otp', authController.verifyOTP);

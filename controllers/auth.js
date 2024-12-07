@@ -9,7 +9,7 @@ const admin = require('firebase-admin');
 require('dotenv').config();
 const fs = require('fs');
 
-const { Users, Credentials, UserSessions, PasswordResetTokens } = db;
+const { Users, Credentials, UserSessions, PasswordResetTokens, Pyschologist } = db;
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -130,6 +130,81 @@ exports.registerUser = async (req, res) => {
         res.status(400).json({ error: true, message: error.message });
     }
 };
+
+
+exports.registerPsikologi = async (req, res) => {
+    const { email, password, name, birthday, prefix_title, suffix_title, isVerified, certificate, price } = req.body;
+    let t;
+
+    try {
+        if (!email || !password || !name || !birthday || !prefix_title || !suffix_title || !isVerified || !certificate || !price) {
+            return res.status(400).json({ 
+                error: true, 
+                message: 'All fields are required' 
+            });
+        }
+
+        const [day, month, year] = birthday.split('/');
+        const birthdayDate = new Date(`${year}-${month}-${day}`);
+
+        if (isNaN(birthdayDate.getTime())) {
+            return res.status(400).json({ 
+                error: true, 
+                message: 'Invalid birthday format' 
+            });
+        }
+
+        t = await db.sequelize.transaction();
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const newCredentials = await Credentials.create(
+            { 
+                email, 
+                password: hashedPassword,
+                email_verification_token: emailVerificationToken,
+                email_verification_expires: emailVerificationExpires
+            },
+            { transaction: t }
+        );
+
+        await Users.create(
+            {
+                credentials_id: newCredentials.credentials_id,
+                email,
+                name,
+                birthday: birthdayDate,
+            },
+            { transaction: t }
+        );
+        await sendVerificationEmail(email, emailVerificationToken);
+
+        await Pyschologist.create(
+            {
+                user_id: user.user_id,
+                prefix_title,
+                suffix_title,
+                certificate,
+                price,
+                isVerified
+            },
+            { transaction: t }
+        );
+        
+
+        await t.commit();
+
+        res.status(201).json({
+            error: false,
+            message: 'User registered successfully! Please check your email to verify your account.'
+        });
+    } catch (error) {
+        if (t) await t.rollback();
+        res.status(400).json({ error: true, message: error.message });
+    }
+};
+
 
 exports.verifyEmail = async (req, res) => {
     const { token } = req.params;
