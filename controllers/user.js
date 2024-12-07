@@ -361,6 +361,7 @@ exports.getAllPsychologists = async (req, res) => {
             "certificate",
             "price",
             "isVerified",
+            "user_id",
             "isOnline",
          ],
          where: { isVerified: true },
