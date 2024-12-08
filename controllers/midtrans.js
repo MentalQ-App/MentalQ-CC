@@ -2,7 +2,7 @@ require("dotenv").config();
 const axios = require("axios");
 
 exports.createTransaction = async (req, res) => {
-   const { price } = req.body;
+   const { price, item_id } = req.body;
 
    try {
       const timestamp = Date.now();
@@ -16,6 +16,14 @@ exports.createTransaction = async (req, res) => {
          credit_card: {
             secure: true,
          },
+         item_details: [
+            {
+               id: item_id,
+               price: price,
+               quantity: 1,
+               name: "MentalQ - Psychologist Service",
+            },
+         ],
       };
 
       const response = await axios.post(
