@@ -1,40 +1,50 @@
-'use strict';
+"use strict";
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('transactions', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
-      transaction_id: {
-        type: Sequelize.INTEGER
-      },
-      psychologist_id: {
-        type: Sequelize.INTEGER
-      },
-      price: {
-        type: Sequelize.INTEGER
-      },
-      buyer_id: {
-        type: Sequelize.INTEGER
-      },
-      isPaid: {
-        type: Sequelize.BOOLEAN
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      }
-    });
-  },
-  async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('transactions');
-  }
+   async up(queryInterface, Sequelize) {
+      await queryInterface.createTable("transactions", {
+         transaction_id: {
+            type: Sequelize.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            field: "transaction_id",
+         },
+         psychologist_id: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+            references: {
+               model: "psychologists",
+               key: "psychologist_id",
+            },
+         },
+         price: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+         },
+         buyer_id: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+            references: {
+               model: "users",
+               key: "user_id",
+            },
+         },
+         isPaid: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+         },
+         createdAt: {
+            allowNull: false,
+            type: Sequelize.DATE,
+         },
+         updatedAt: {
+            allowNull: false,
+            type: Sequelize.DATE,
+         },
+      });
+   },
+   async down(queryInterface, Sequelize) {
+      await queryInterface.dropTable("transactions");
+   },
 };
