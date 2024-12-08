@@ -104,6 +104,13 @@ exports.cancelTransaction = async (req, res) => {
          }
       );
 
+      if (response.data.status_code !== "200") {
+         return res.status(400).json({
+            error: true,
+            message: "Failed to cancel transaction",
+         });
+      }
+
       res.status(200).json({
          message: "Transaction canceled successfully",
          error: false,
