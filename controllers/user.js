@@ -398,7 +398,7 @@ exports.getPsychologistById = async (req, res) => {
 
       const psychologist = await Psychologist.findOne({
          where: {
-            id,
+            psychologist_id: id,
             isVerified: true,
          },
          include: [
