@@ -25,7 +25,7 @@ exports.createTransaction = async (req, res) => {
             headers: {
                "Content-Type": "application/json",
                Authorization: `Basic ${Buffer.from(
-                  process.env.MIDTRANS_SERVER_KEY + ":"
+                  process.env.MIDTRANS_SERVER_KEY
                ).toString("base64")}:`,
             },
          }
