@@ -50,6 +50,7 @@ exports.createTransaction = async (req, res) => {
          message: "Transaction created successfully",
          error: false,
          data: {
+            item_id: item_id,
             order_id: order_id,
             token: response.data.token,
             redirect_url: response.data.redirect_url,
@@ -77,6 +78,34 @@ exports.getStatusTransaction = async (req, res) => {
 
       res.status(200).json({
          message: "Transaction status retrieved successfully",
+         error: false,
+         data: {
+            transaction_status: response.data.transaction_status,
+            status_message: response.data.status_message,
+         },
+      });
+   } catch (error) {
+      res.status(500).json({ error: error.message });
+   }
+};
+
+exports.cancelTransaction = async (req, res) => {
+   const { id } = req.params;
+
+   try {
+      const response = await axios.get(
+         `https://api.sandbox.midtrans.com/v2/${id}/cancel`,
+         {
+            headers: {
+               Authorization: `Basic ${Buffer.from(
+                  process.env.MIDTRANS_SERVER_KEY
+               ).toString("base64")}:`,
+            },
+         }
+      );
+
+      res.status(200).json({
+         message: "Transaction canceled successfully",
          error: false,
          data: {
             transaction_status: response.data.transaction_status,
