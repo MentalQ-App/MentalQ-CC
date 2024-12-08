@@ -4,6 +4,7 @@ const userController = require("../controllers/user");
 const noteController = require("../controllers/note");
 const authController = require("../controllers/auth");
 const analysisController = require("../controllers/analysis");
+const midtransController = require("../controllers/midtrans");
 const authenticateToken = require("../middleware/authenticateToken");
 
 const router = express.Router();
@@ -48,5 +49,8 @@ router.put("/notes/delete/:id", authenticateToken, noteController.deleteNote);
 
 // Analysis Routes
 router.get("/analysis", authenticateToken, analysisController.getAnalysis);
+
+// Midtrans Routes
+router.post("/transaction", midtransController.createTransaction);
 
 module.exports = router;
