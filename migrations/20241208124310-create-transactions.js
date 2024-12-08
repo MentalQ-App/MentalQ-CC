@@ -9,6 +9,12 @@ module.exports = {
             autoIncrement: true,
             field: "transaction_id",
          },
+
+         order_id: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+         },
+
          psychologist_id: {
             type: Sequelize.INTEGER,
             allowNull: false,
