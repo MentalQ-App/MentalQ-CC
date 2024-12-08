@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
             as: "psychologist",
          });
 
-         Transactions.belongsTo(models.User, {
+         Transactions.belongsTo(models.Users, {
             foreignKey: "buyer_id",
             as: "users",
          });
