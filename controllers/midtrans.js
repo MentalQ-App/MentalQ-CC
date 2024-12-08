@@ -93,7 +93,7 @@ exports.cancelTransaction = async (req, res) => {
    const { id } = req.params;
 
    try {
-      const response = await axios.get(
+      const response = await axios.post(
          `https://api.sandbox.midtrans.com/v2/${id}/cancel`,
          {
             headers: {
