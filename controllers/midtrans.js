@@ -61,7 +61,7 @@ exports.createTransaction = async (req, res) => {
 };
 
 exports.getStatusTransaction = async (req, res) => {
-   const { order_id } = req.params;
+   const order_id = req.order_id;
 
    try {
       const response = await axios.get(
