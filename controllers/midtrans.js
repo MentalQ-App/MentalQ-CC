@@ -8,6 +8,13 @@ exports.createTransaction = async (req, res) => {
       const timestamp = Date.now();
       const order_id = `MentalQ-${timestamp}`;
 
+      if (!price || !item_id) {
+         return res.status(400).json({
+            error: true,
+            message: "price and item_id are required",
+         });
+      }
+
       const requestBody = {
          transaction_details: {
             order_id: order_id,
