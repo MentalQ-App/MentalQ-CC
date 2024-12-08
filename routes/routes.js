@@ -52,5 +52,6 @@ router.get("/analysis", authenticateToken, analysisController.getAnalysis);
 
 // Midtrans Routes
 router.post("/transaction", midtransController.createTransaction);
+router.get("/transaction/:order_id", midtransController.getTransactionStatus);
 
 module.exports = router;

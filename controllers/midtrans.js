@@ -78,7 +78,10 @@ exports.getStatusTransaction = async (req, res) => {
       res.status(200).json({
          message: "Transaction status retrieved successfully",
          error: false,
-         data: response.data,
+         data: {
+            transaction_status: response.data.transaction_status,
+            status_message: response.data.status_message,
+         },
       });
    } catch (error) {
       res.status(500).json({ error: error.message });
