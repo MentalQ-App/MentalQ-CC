@@ -61,11 +61,11 @@ exports.createTransaction = async (req, res) => {
 };
 
 exports.getStatusTransaction = async (req, res) => {
-   const order_id = req.order_id;
+   const { id } = req.params;
 
    try {
       const response = await axios.get(
-         `https://app.sandbox.midtrans.com/v2/${order_id}/status`,
+         `https://api.sandbox.midtrans.com/v2/${id}/status`,
          {
             headers: {
                Authorization: `Basic ${Buffer.from(
