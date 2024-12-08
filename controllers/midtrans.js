@@ -31,7 +31,14 @@ exports.createTransaction = async (req, res) => {
          }
       );
 
-      res.json(response.data);
+      res.status(200).json({
+         message: "Transaction created successfully",
+         error: false,
+         data: {
+            token: response.data.token,
+            redirect_url: response.data.redirect_url,
+         },
+      });
    } catch (e) {
       res.status(500).json({ error: error.message });
    }
