@@ -31,9 +31,6 @@ router.get("/verify-email/:token", authController.verifyEmail);
 router.post("/login", authController.loginUser);
 router.post("/google-login", authController.authFirebase);
 
-// Auth Psikologi Routes
-router.post("/register-psikologi", authController.registerPsikologi);
-router.get("/psychologist", userController.getAllPsychologists);
 
 // Password Reset Routes
 router.post("/request-reset", authController.requestPasswordReset);
@@ -46,6 +43,13 @@ router.get("/notes/:id", authenticateToken, noteController.getNoteById);
 router.post("/notes", authenticateToken, noteController.createNote);
 router.put("/notes/:id", authenticateToken, noteController.updateNote);
 router.put("/notes/delete/:id", authenticateToken, noteController.deleteNote);
+
+// Auth Psikologi Routes
+router.post("/register-psikologi", authController.registerPsikologi);
+router.get("/psychologist", userController.getAllPsychologists);
+
+// Psikologi Notes
+router.get("/psychologist/name/:id", userController.getPsychologistById);
 
 // Analysis Routes
 router.get("/analysis", authenticateToken, analysisController.getAnalysis);

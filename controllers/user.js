@@ -389,3 +389,48 @@ exports.getAllPsychologists = async (req, res) => {
       });
    }
 };
+exports.getPsychologistById = async (req, res) => {
+   const psychologist_id = req.params.psychologist_id;
+   let t;
+
+   try {
+      t = await db.sequelize.transaction();
+
+      const psychologist = await Psychologist.findOne({
+         where: {
+            psychologist_id,
+            isVerified: true,
+         },
+         include: [
+            {
+               model: Users,
+               as: "users",
+               attributes: ["name", "profile_photo_url"],
+            },
+         ],
+         transaction: t,
+      });
+
+      if (!psychologist) {
+         await t.rollback();
+         return res.status(404).json({
+            error: true,
+            message: "Psychologist not found",
+         });
+      }
+
+      await t.commit();
+
+      res.status(200).json({
+         error: false,
+         message: "Psychologist retrieved successfully",
+         psychologist,
+      });
+   } catch (error) {
+      if (t) await t.rollback();
+      res.status(500).json({
+         error: true,
+         message: error.message,
+      });
+   }
+};
