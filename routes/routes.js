@@ -31,6 +31,9 @@ router.get("/verify-email/:token", authController.verifyEmail);
 router.post("/login", authController.loginUser);
 router.post("/google-login", authController.authFirebase);
 
+// User Routes
+router.get("/user/:id", authenticateToken, userController.getUserById);
+
 // Password Reset Routes
 router.post("/request-reset", authController.requestPasswordReset);
 router.post("/verify-otp", authController.verifyOTP);

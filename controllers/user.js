@@ -253,7 +253,7 @@ exports.getAllUsers = async (req, res) => {
 };
 
 exports.getUserById = async (req, res) => {
-   const user_id = req.user_id;
+   const { id } = req.params;
    let t;
 
    try {
@@ -261,10 +261,15 @@ exports.getUserById = async (req, res) => {
 
       const user = await Users.findOne({
          where: {
-            user_id,
-            isActive: true,
+            user_id: id,
          },
-         attributes: ["user_id", "email", "name", "birthday"],
+         attributes: [
+            "user_id",
+            "email",
+            "name",
+            "birthday",
+            "profile_photo_url",
+         ],
          transaction: t,
       });
 
