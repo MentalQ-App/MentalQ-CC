@@ -293,12 +293,10 @@ const analyzeNotes = async (user_id) => {
          }
       );
 
-      const { predicted_status, confidence_score } = aiResponse.data[0];
-
-      console.log("Test:", confidence_score);
+      const { predicted_status, confidence_scores } = aiResponse.data[0];
 
       const highest_confidence_score = Math.max(
-         ...Object.values(confidence_score)
+         ...Object.values(confidence_scores)
       );
 
       const newAnalysis = await Analysis.create({
