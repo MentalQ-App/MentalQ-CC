@@ -295,6 +295,8 @@ const analyzeNotes = async (user_id) => {
 
       const { predicted_status, confidence_score } = aiResponse.data[0];
 
+      console.log("Test:", confidence_score);
+
       const highest_confidence_score = Math.max(
          ...Object.values(confidence_score)
       );
