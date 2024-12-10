@@ -137,7 +137,7 @@ exports.getNoteById = async (req, res) => {
 
 exports.updateNote = async (req, res) => {
    const { id } = req.params;
-   const { title, content, emotion } = req.body;
+   const { title, content, emotion, content_normalized } = req.body;
    const user_id = req.user_id;
    let t;
 
@@ -166,6 +166,7 @@ exports.updateNote = async (req, res) => {
             title: title || note.title,
             content: content || note.content,
             emotion: emotion || note.emotion,
+            content_normalized: content_normalized || note.content_normalized,
          },
          { transaction: t }
       );
