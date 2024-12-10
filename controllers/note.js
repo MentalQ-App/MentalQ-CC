@@ -293,11 +293,16 @@ const analyzeNotes = async (user_id) => {
          }
       );
 
-      const { predicted_status } = aiResponse.data[0];
+      const { predicted_status, confidence_score } = aiResponse.data[0];
+
+      const highest_confidence_score = Math.max(
+         ...Object.values(confidence_score)
+      );
 
       const newAnalysis = await Analysis.create({
          note_id: dailyNotes[0].note_id,
          predicted_status: predicted_status,
+         confidence_score: highest_confidence_score,
       });
 
       console.log("Analysis completed successfully:", newAnalysis);
