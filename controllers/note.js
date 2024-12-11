@@ -30,6 +30,7 @@ exports.createNote = async (req, res) => {
             isActive: true,
             createdAt: {
                [db.Sequelize.Op.gte]: today,
+               [db.Sequelize.Op.lt]: new Date(today.getTime() + 24 * 60 * 60 * 1000),
             },
          },
          transaction: t,
