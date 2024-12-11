@@ -32,14 +32,13 @@ exports.createNote = async (req, res) => {
          where: {
             user_id,
             isActive: true,
-            [db.sequelize.where(
-               db.sequelize.fn('DATE', db.sequelize.col('createdAt')),
-               todayDate
-            )]: true,
+            createdAt: {
+               [db.Sequelize.Op.gte]: db.sequelize.literal(`DATE('${todayDate}')`),
+               [db.Sequelize.Op.lt]: db.sequelize.literal(`DATE('${todayDate}') + INTERVAL 1 DAY`)
+            }
          },
          transaction: t,
       });
-      
 
       if (existingNote) {
          await t.rollback();
