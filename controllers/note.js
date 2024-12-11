@@ -21,7 +21,7 @@ exports.createNote = async (req, res) => {
          });
       }
 
-      const todayDate = new Date().toISOString().split('T')[0];
+      const todayDate = moment().tz('Asia/Jakarta').format('YYYY-MM-DD');
 
       const existingNote = await Notes.findOne({
          where: {
