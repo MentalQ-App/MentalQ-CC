@@ -27,6 +27,7 @@ exports.createNote = async (req, res) => {
        const existingNote = await Notes.findOne({
            where: {
                user_id,
+               isActive: true,
                createdAt: {
                    [db.Sequelize.Op.gte]: today
                }
