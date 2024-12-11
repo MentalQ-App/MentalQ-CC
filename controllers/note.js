@@ -197,7 +197,7 @@ exports.updateNote = async (req, res) => {
       }
 
       if (note.content == content) {
-         res.status(200).json({
+         return res.status(200).json({
             error: false,
             message: "Nothing changed",
             note: note,
