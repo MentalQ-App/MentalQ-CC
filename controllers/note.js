@@ -200,7 +200,7 @@ exports.updateNote = async (req, res) => {
          res.status(200).json({
             error: false,
             message: "Nothing changed",
-            note: updatedNote,
+            note: note,
          });
       }
 
