@@ -281,7 +281,9 @@ const analyzeNotes = async (user_id) => {
          return null;
       }
 
-      const content = dailyNotes.map((note) => note.content).join(" ");
+      const content = dailyNotes
+         .map((note) => note.content_normalized || note.content)
+         .join(" ");
 
       const aiResponse = await axios.post(
          process.env.CLOUDRUNAPI + "/predict",
