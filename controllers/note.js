@@ -20,14 +20,22 @@ exports.createNote = async (req, res) => {
             message: "User not found",
          });
       }
-      
-      const todayDate = moment().format('YYYY-MM-DD');
+
+      const todayDate = new Intl.DateTimeFormat('en-CA', {
+         timeZone: 'Asia/Jakarta',
+         year: 'numeric',
+         month: '2-digit',
+         day: '2-digit',
+      }).format(new Date());
 
       const existingNote = await Notes.findOne({
          where: {
             user_id,
             isActive: true,
-            [Sequelize.where(Sequelize.fn('DATE', Sequelize.col('createdAt')), todayDate)]: true,
+            [Sequelize.where(
+               Sequelize.fn('DATE', Sequelize.col('createdAt')),
+               todayDate
+            )]: true,
          },
          transaction: t,
       });
