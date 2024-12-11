@@ -197,6 +197,7 @@ exports.updateNote = async (req, res) => {
       }
 
       if (note.content == content) {
+         await t.rollback();
          return res.status(200).json({
             error: false,
             message: "Nothing changed",
