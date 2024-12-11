@@ -20,8 +20,8 @@ exports.createNote = async (req, res) => {
             message: "User not found",
          });
       }
-
-      const todayDate = moment().tz('Asia/Jakarta').format('YYYY-MM-DD');
+      
+      const todayDate = moment().format('YYYY-MM-DD');
 
       const existingNote = await Notes.findOne({
          where: {
@@ -31,6 +31,7 @@ exports.createNote = async (req, res) => {
          },
          transaction: t,
       });
+      
 
       if (existingNote) {
          await t.rollback();
