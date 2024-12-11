@@ -21,17 +21,13 @@ exports.createNote = async (req, res) => {
          });
       }
 
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      const todayDate = new Date().toISOString().split('T')[0];
 
       const existingNote = await Notes.findOne({
          where: {
             user_id,
             isActive: true,
-            createdAt: {
-               [db.Sequelize.Op.gte]: today,
-               [db.Sequelize.Op.lt]: new Date(today.getTime() + 24 * 60 * 60 * 1000),
-            },
+            [Sequelize.where(Sequelize.fn('DATE', Sequelize.col('createdAt')), todayDate)]: true,
          },
          transaction: t,
       });
