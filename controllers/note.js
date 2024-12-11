@@ -32,8 +32,8 @@ exports.createNote = async (req, res) => {
          where: {
             user_id,
             isActive: true,
-            [Sequelize.where(
-               Sequelize.fn('DATE', Sequelize.col('createdAt')),
+            [db.sequelize.where(
+               db.sequelize.fn('DATE', Sequelize.col('createdAt')),
                todayDate
             )]: true,
          },
