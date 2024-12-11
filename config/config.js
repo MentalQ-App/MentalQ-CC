@@ -8,6 +8,7 @@ module.exports = {
     database: process.env.DB_NAME || 'mentalqdb',
     host: process.env.DB_HOST || '127.0.0.1',
     dialect: process.env.DB_DIALECT || 'mysql',
+    timezone: '+07:00',
     logging: false,
   },
   test: {
@@ -16,6 +17,7 @@ module.exports = {
     database: process.env.DB_NAME || 'my_database_test',
     host: process.env.DB_HOST || '127.0.0.1',
     dialect: process.env.DB_DIALECT || 'mysql',
+    timezone: '+07:00',
     logging: false,
   },
   production: {
@@ -26,6 +28,7 @@ module.exports = {
     port: process.env.DB_PORT || 3306,
     dialect: process.env.DB_DIALECT || 'mysql',
     dialectModule: mysql2,
+    timezone: '+07:00',
     logging: false,
     pool: {
       max: 5,
