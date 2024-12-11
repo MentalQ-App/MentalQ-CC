@@ -76,6 +76,13 @@ exports.getAllNotes = async (req, res) => {
             user_id,
             isActive: true,
          },
+         include: [
+            {
+               model: Analysis,
+               as: "analysis",
+               attributes: ["predicted_status", "confidence_score"],
+            },
+         ],
          transaction: t,
       });
 
