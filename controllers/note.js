@@ -108,7 +108,7 @@ exports.getAllNotes = async (req, res) => {
          delete noteData.analysis;
 
          return {
-            ...noteData.toJSON(),
+            ...noteData,
             predicted_status: analysis.predicted_status,
             confidence_score: analysis.confidence_score,
          };
