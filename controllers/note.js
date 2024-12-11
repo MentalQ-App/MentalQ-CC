@@ -306,14 +306,28 @@ const analyzeNotes = async (user_id) => {
          ...Object.values(confidence_scores)
       );
 
-      const newAnalysis = await Analysis.create({
-         note_id: dailyNotes[0].note_id,
-         predicted_status: predicted_status,
-         confidence_score: highest_confidence_score,
+      const findNoteById = await Analysis.findOne({
+         where: {
+            note_id: dailyNotes[0].note_id,
+         },
       });
 
-      console.log("Analysis completed successfully:", newAnalysis);
-      return newAnalysis;
+      if (findNoteById) {
+         const updatedAnalysis = await findNoteById.update({
+            predicted_status: predicted_status,
+            confidence_score: highest_confidence_score,
+         });
+         console.log("Analysis updated successfully:", updatedAnalysis);
+         return updatedAnalysis;
+      } else {
+         const newAnalysis = await Analysis.create({
+            note_id: dailyNotes[0].note_id,
+            predicted_status: predicted_status,
+            confidence_score: highest_confidence_score,
+         });
+         console.log("Analysis completed successfully:", newAnalysis);
+         return newAnalysis;
+      }
    } catch (error) {
       console.error("Error analyzing notes:", error.message);
       console.error(error.stack);
