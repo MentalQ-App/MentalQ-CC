@@ -36,10 +36,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true,
          },
-         confidence_score: {
-            type: DataTypes.FLOAT,
-            allowNull: true,
-         },
       },
       {
          sequelize,
