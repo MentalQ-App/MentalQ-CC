@@ -9,48 +9,62 @@ exports.createNote = async (req, res) => {
    let t;
 
    try {
-      // if (!title || !content || !emotion) {
-      //     return res.status(400).json({
-      //         error: true,
-      //         message: 'All fields are required'
-      //     });
-      // }
+       t = await db.sequelize.transaction();
 
-      t = await db.sequelize.transaction();
+       const user = await Users.findByPk(user_id, { transaction: t });
+       
+       if (!user) {
+           await t.rollback();
+           return res.status(404).json({
+               error: true,
+               message: "User not found",
+           });
+       }
 
-      const user = await Users.findByPk(user_id, { transaction: t });
+       const today = new Date();
+       today.setHours(0, 0, 0, 0);
 
-      if (!user) {
-         await t.rollback();
-         return res.status(404).json({
-            error: true,
-            message: "User not found",
-         });
-      }
+       const existingNote = await Notes.findOne({
+           where: {
+               user_id,
+               createdAt: {
+                   [db.Sequelize.Op.gte]: today
+               }
+           },
+           transaction: t
+       });
 
-      const newNote = await Notes.create(
-         {
-            user_id,
-            title,
-            content,
-            emotion,
-         },
-         { transaction: t }
-      );
+       if (existingNote) {
+           await t.rollback();
+           return res.status(400).json({
+               error: true,
+               message: "You have already created a note today",
+           });
+       }
 
-      await t.commit();
+       const newNote = await Notes.create(
+           {
+               user_id,
+               title,
+               content,
+               emotion,
+           },
+           { transaction: t }
+       );
 
-      res.status(201).json({
-         error: false,
-         message: "Note created successfully",
-         note: newNote,
-      });
+       await t.commit();
+
+       res.status(201).json({
+           error: false,
+           message: "Note created successfully",
+           note: newNote,
+       });
    } catch (error) {
-      if (t) await t.rollback();
-      res.status(400).json({
-         error: true,
-         message: error.message,
-      });
+       if (t) await t.rollback();
+       res.status(400).json({
+           error: true,
+           message: error.message,
+       });
    }
 };
 
