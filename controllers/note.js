@@ -103,8 +103,12 @@ exports.getAllNotes = async (req, res) => {
 
       const notesWithAnalysis = notes.map((note) => {
          const analysis = note.analysis || {};
+
+         const noteData = note.toJSON();
+         delete noteData.analysis;
+
          return {
-            ...note.toJSON(),
+            ...noteData.toJSON(),
             predicted_status: analysis.predicted_status,
             confidence_score: analysis.confidence_score,
          };
