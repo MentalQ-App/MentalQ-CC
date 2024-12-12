@@ -196,15 +196,6 @@ exports.updateNote = async (req, res) => {
          });
       }
 
-      if (note.content == content) {
-         await t.rollback();
-         return res.status(200).json({
-            error: false,
-            message: "Nothing changed",
-            note: note,
-         });
-      }
-
       const updatedNote = await note.update(
          {
             title: title || note.title,
@@ -217,7 +208,9 @@ exports.updateNote = async (req, res) => {
 
       await t.commit();
 
-      analyzeNotes(user_id);
+      if (note.content != content) {
+         analyzeNotes(user_id);
+      }
 
       res.status(200).json({
          error: false,
