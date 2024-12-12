@@ -30,18 +30,18 @@
 | //verify-email/:token | get | Getting Email Verification Token |
 | /login | post | Users Login |
 | /google-login | post | Users Login via Google |
-| /request-reset | post | 
-| /verify-otp | post |
-| /reset-password | post |
-| /notes | get |
-| /notes/:id | get |
-| /notes | post |
-| /notes/:id | put |
-| /notes/delete/:id | put |
-| /register-psikologi | post |
-| /psychologist | get |
-| /psychologist/:id | get |
-| /analysis  | get |
-| /transaction | post |
-| /transaction/:id | get |
-| /transaction/:id/cancel | post|
+| /request-reset | post | Sending Request Reset Password |
+| /verify-otp | post | OTP Verification |
+| /reset-password | post | Sending Request New Password |
+| /notes | get | Getting All Notes Data |
+| /notes/:id | get | Getting Notes Data by Id |
+| /notes | post | Creating New Notes |
+| /notes/:id | put | Updating Notes by Id |
+| /notes/delete/:id | put | Deleting Notes by Id |
+| /register-psikologi | post | Psychologist Register |
+| /psychologist | get | Getting All Psychologist Data |
+| /psychologist/:id | get | Getting Psychologist Data by Id |
+| /analysis  | get | Getting Analysis Data From Model |
+| /transaction | post | Creating New Transaction |
+| /transaction/:id | get | Getting Status Transaction by Id |
+| /transaction/:id/cancel | post | Canceling Transaction Process |
