@@ -10,6 +10,11 @@
 4. [API Endpoint](#Api-Endpoint)
 
 ## Description
+The MentalQ app utilizes **a robust cloud architecture** powered by **Google Cloud**. We’ve implemented a **CI/CD pipeline** that integrates our API from GitHub into Cloud Build, automatically packaging the app into a Dockerfile and storing it in **Artifact Registry**. The app is then deployed to two synchronized **Cloud Run** instances, **ensuring high availability**.
+
+Our app services are powered by **Cloud Storage** and **Cloud SQL** for **efficient data management**. **Cloud IAM** and **Secret Manager** are **integrated** into the architecture to provide **secure environment** management, ensuring that sensitive information such as API keys and configurations are securely handled. This integration with Secret Manager ensures that our deployment pipeline meets the **highest standards of security** while providing **a seamless, automated process** from development to deployment.
+
+**Once set up**, the API is ready to be **consumed** by the MentalQ app, **offering secure, scalable, and reliable mental health support to users.**
 
 
 ## C242-PS246 - CC
