@@ -217,10 +217,7 @@ exports.updateNote = async (req, res) => {
 
       await t.commit();
 
-      if (note.content == content) {
-      } else {
-         analyzeNotes(user_id);
-      }
+      analyzeNotes(user_id);
 
       res.status(200).json({
          error: false,
