@@ -1,5 +1,20 @@
-MentalQ is a mobile application designed to detect a user's mental state by analyzing and processing their daily notes. Many people struggle to understand and address their mental well-being due to a lack of self-awareness and accessible, reliable tools for self-assessment. Mentalku tackles this problem by providing users with a clear, personalized understanding of their emotional health based on their daily reflections. Leveraging natural language processing (NLP) and sentiment analysis, the application interprets written content to identify underlying emotions, stress levels, and mental health patterns.
+# MentalQ - C242-PS246
 
-Our team aims to create a “painkiller” solution that goes beyond offering general wellness advice by directly addressing a crucial need: mental health awareness and actionable guidance. Through research, we seek to answer questions such as: What common indicators in personal reflections signal mental distress? and How can real-time feedback foster user resilience and mental wellness?
 
-This app could empower users to make informed decisions about self-care and, where necessary, seek professional help. By offering insights and tailored recommendations, Mentalku hopes to serve as a valuable tool in improving mental health, promoting proactive management of well-being, and making mental health resources more accessible
+
+## Table of Contents
+
+1. [Team](#C242-PS246---cc)
+2. [What is MentalQ?](#Project-Description)
+3. [Technology](#Technology)
+4. [Feature](#Feature)
+5. [Screenshots](#Screenshots)
+6. [Video Demo](#Video-demo)
+7. [Download](#Download-our-apps)
+
+## C242-PS246 - CC
+
+| Bangkit ID | Name | Learning Path | University | LinkedIn |
+| ---      | ---       | ---       | ---       | ---       |
+| C227B4KY2690  | Muhammad Afif Rohman Muzaky  | Cloud Computing | Universitas Jember | [![text](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/muhammadafifrohmanmuzaky/) |
+| C227B4KY1611  | Gharizah Ligar Indrastata Alexandri | Cloud Computing | Universitas Jember | [![text](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/gharizahligar/) |
