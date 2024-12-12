@@ -217,8 +217,8 @@ exports.updateNote = async (req, res) => {
 
       await t.commit();
 
-      if (note.content != content) {
-         console.log("Note content updated, analyzing notes...");
+      if (note.content == content) {
+      } else {
          analyzeNotes(user_id);
       }
 
