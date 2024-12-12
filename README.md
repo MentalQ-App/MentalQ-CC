@@ -4,8 +4,12 @@
 
 ## Table of Contents
 
-1. [Team](#C242-PS246---cc)
-2. [Google Architecture](#Google-Architecture)
+1. [Description](#Description)
+2. [Team](#C242-PS246---cc)
+3. [Google Architecture](#Google-Architecture)
+4. [API Endpoint](#Api-Endpoint)
+
+## Description
 
 
 ## C242-PS246 - CC
