@@ -6,11 +6,7 @@
 
 1. [Team](#C242-PS246---cc)
 2. [Google Architecture](#Google-Architecture)
-3. [Technology](#Technology)
-4. [Feature](#Feature)
-5. [Screenshots](#Screenshots)
-6. [Video Demo](#Video-demo)
-7. [Download](#Download-our-apps)
+
 
 ## C242-PS246 - CC
 
@@ -23,4 +19,29 @@
 
 ![image](https://github.com/user-attachments/assets/12b7e952-5138-494a-a723-aa5cb5a2d186)
 
+## API Endpoint
 
+| Endpoint | Type | Descriptions |
+| ---   | ---      | ---         |
+| /terms-of-service | get | Getting Terms of Service data |
+| /privacy-policy | get | Getting Privacy Policy data |
+| /register | post | Sending user registration data into |
+| /users/update | put | Updating Users Photo Profile |
+| //verify-email/:token | get | Getting Email Verification Token |
+| /login | post | Users Login |
+| /google-login | post | Users Login via Google |
+| /request-reset | post | 
+| /verify-otp | post |
+| /reset-password | post |
+| /notes | get |
+| /notes/:id | get |
+| /notes | post |
+| /notes/:id | put |
+| /notes/delete/:id | put |
+| /register-psikologi | post |
+| /psychologist | get |
+| /psychologist/:id | get |
+| /analysis  | get |
+| /transaction | post |
+| /transaction/:id | get |
+| /transaction/:id/cancel | post|
