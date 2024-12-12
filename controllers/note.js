@@ -21,16 +21,21 @@ exports.createNote = async (req, res) => {
          });
       }
 
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      const todayDate = new Intl.DateTimeFormat('en-CA', {
+         timeZone: 'Asia/Jakarta',
+         year: 'numeric',
+         month: '2-digit',
+         day: '2-digit',
+      }).format(new Date());
 
       const existingNote = await Notes.findOne({
          where: {
             user_id,
             isActive: true,
             createdAt: {
-               [db.Sequelize.Op.gte]: today,
-            },
+               [db.Sequelize.Op.gte]: db.sequelize.literal(`DATE('${todayDate}')`),
+               [db.Sequelize.Op.lt]: db.sequelize.literal(`DATE('${todayDate}') + INTERVAL 1 DAY`)
+            }
          },
          transaction: t,
       });
