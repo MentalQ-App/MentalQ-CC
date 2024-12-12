@@ -21,11 +21,11 @@ exports.createNote = async (req, res) => {
          });
       }
 
-      const todayDate = new Intl.DateTimeFormat('en-CA', {
-         timeZone: 'Asia/Jakarta',
-         year: 'numeric',
-         month: '2-digit',
-         day: '2-digit',
+      const todayDate = new Intl.DateTimeFormat("en-CA", {
+         timeZone: "Asia/Jakarta",
+         year: "numeric",
+         month: "2-digit",
+         day: "2-digit",
       }).format(new Date());
 
       const existingNote = await Notes.findOne({
@@ -33,9 +33,13 @@ exports.createNote = async (req, res) => {
             user_id,
             isActive: true,
             createdAt: {
-               [db.Sequelize.Op.gte]: db.sequelize.literal(`DATE('${todayDate}')`),
-               [db.Sequelize.Op.lt]: db.sequelize.literal(`DATE('${todayDate}') + INTERVAL 1 DAY`)
-            }
+               [db.Sequelize.Op.gte]: db.sequelize.literal(
+                  `DATE('${todayDate}')`
+               ),
+               [db.Sequelize.Op.lt]: db.sequelize.literal(
+                  `DATE('${todayDate}') + INTERVAL 1 DAY`
+               ),
+            },
          },
          transaction: t,
       });
@@ -214,6 +218,7 @@ exports.updateNote = async (req, res) => {
       await t.commit();
 
       if (note.content != content) {
+         console.log("Note content updated, analyzing notes...");
          analyzeNotes(user_id);
       }
 
