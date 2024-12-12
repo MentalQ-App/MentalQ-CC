@@ -205,6 +205,8 @@ exports.updateNote = async (req, res) => {
          });
       }
 
+      const initialContent = note.content;
+
       const updatedNote = await note.update(
          {
             title: title || note.title,
@@ -217,7 +219,9 @@ exports.updateNote = async (req, res) => {
 
       await t.commit();
 
-      analyzeNotes(user_id);
+      if (content != initialContent) {
+         analyzeNotes(user_id);
+      }
 
       res.status(200).json({
          error: false,
