@@ -32,24 +32,24 @@ Our app services are powered by **Cloud Storage** and **Cloud SQL** for **effici
 
 | Endpoint | Type | Descriptions |
 | ---   | ---      | ---         |
-| /terms-of-service | get | Getting Terms of Service data |
-| /privacy-policy | get | Getting Privacy Policy data |
-| /register | post | Sending user registration data into |
+| /terms-of-service | get | Renders the "Terms of Service" page for the application. |
+| /privacy-policy | get | Renders the "Privacy Policy" page for the application. |
+| /register | post | Handles user registration by creating new credentials and user records, and sends an email verification token. |
 | /users/update | put | Updating Users Photo Profile |
-| //verify-email/:token | get | Getting Email Verification Token |
-| /login | post | Users Login |
-| /google-login | post | Users Login via Google |
-| /request-reset | post | Sending Request Reset Password |
-| /verify-otp | post | OTP Verification |
-| /reset-password | post | Sending Request New Password |
-| /notes | get | Getting All Notes Data |
-| /notes/:id | get | Getting Notes Data by Id |
-| /notes | post | Creating New Notes |
-| /notes/:id | put | Updating Notes by Id |
-| /notes/delete/:id | put | Deleting Notes by Id |
-| /register-psikologi | post | Psychologist Register |
-| /psychologist | get | Getting All Psychologist Data |
-| /psychologist/:id | get | Getting Psychologist Data by Id |
+| //verify-email/:token | get | Verifies the user's email address using a token sent to their email. |
+| /login | post | Authenticates a user using email and password.|
+| /google-login | post | Users Login via Google, Authenticates a user using a Firebase token. |
+| /request-reset | post | Initiates a password reset process by generating an OTP (One-Time Password) and sending it to the user's email. |
+| /verify-otp | post | Verifies the OTP provided by the user for password reset. |
+| /reset-password | post | Resets the user's password after verifying the OTP. |
+| /notes | get | Retrieves all active notes for the authenticated user. |
+| /notes/:id | get | Retrieves a single note by its ID for the authenticated user. |
+| /notes | post | Creates a new note for the authenticated user. |
+| /notes/:id | put | Updates an existing note by its ID for the authenticated user. Only fields provided in the request body will be updated. |
+| /notes/delete/:id | put | Soft deletes a note by its ID for the authenticated user. The isActive field is set to false |
+| /register-psikologi | post | Registers a new psychologist with the required personal and professional details. |
+| /psychologist | get | Retrieves a list of all verified psychologists. |
+| /psychologist/:id | get | Fetches details of a specific psychologist by their ID. |
 | /analysis  | get | Getting Analysis Data From Model |
 | /transaction | post | Creating New Transaction |
 | /transaction/:id | get | Getting Status Transaction by Id |
